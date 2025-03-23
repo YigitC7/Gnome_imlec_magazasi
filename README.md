@@ -25,14 +25,28 @@ Bir temayı indirdiniz ama nasıl aktif hale getireceğinizi bilmiyor musunuz? o
 ## 3 Sekmeyi açtıktan sonra İmleçleri ve Simgeleri buradan değiştirebilirsiniz
 ![image](IMG/win/ornek3.png)
 
+## İndirmek
+
+### Dosyalar
+Derlenmiş program dosyası: <b><a href="https://github.com/YigitC7/PardusTemaStore/releases/download/b1.0/PardusTemaMagazasi_beta1.0.zip">indir</a> 64 Bit</b>
+
+### Manuel Derleme
+Programı derlemek için aşağıdaki komudu terminale yapıştırın
+```bash	
+sudo apt update -y && sudo apt upgrade -y
+sudo apt install git python3-venv -y
+git clone https://github.com/YigitC7/PardusTemaStore.git
+cd PardusTemaStore
+python3 -m venv lib
+source lib/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install pyinstaller customtkinter Pillow requests
+pip install --no-cache-dir --force-reinstall Pillow
+pyinstaller --noconsole --onefile --windowed --hidden-import=PIL._tkinter_finder --hidden-import=PIL._imagingtk main.py
+cp -f dist/main PardusTemaStore
+```
+
 ## Kaynak
 >Bütün tema paketleri <a href="https://www.gnome-look.org/browse/">Gnome look</a> sitesinden alınmıştır ve indirme işlemini benim Google Drive depomdan yapar, işte bütün <a href="https://drive.google.com/drive/folders/1pMVBmQWIJZRVufvMEMjYwO-ck17EqKq1?usp=drive_link">Temalar</a>
 
-## İndirilen Tema Nasıl Aktif Edilir?
-Bir temayı indirdiniz ama nasıl aktif hale getireceğinizi bilmiyor musunuz? o zaman şu adımları takip edin:
-### 1 Pardus uygulama arama bölümüne "ince ayarlar" uygulamasını arayın ve o uygulamayı açın
-![image](IMG/win/ornek.png)
-## 2 Uygulamayı açtıktan sonra "Görünüm" sekmesine girin
-![image](IMG/win/ornek2.png)
-## 3 Sekmeyi açtıktan sonra İmleçleri ve Simgeleri buradan değiştirebilirsiniz
-![image](IMG/win/ornek3.png)
+

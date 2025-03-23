@@ -35,15 +35,15 @@ Programı derlemek için aşağıdaki komudu terminale yapıştırın
 ```bash	
 sudo apt update -y && sudo apt upgrade -y
 sudo apt install git python3-venv -y
-git clone https://github.com/YigitC7/PardusTemaStore.git
-cd PardusTemaStore
+git clone https://github.com/YigitC7/Gnome_imlec_magazasi.git
+cd Gnome_imlec_magazasi
 python3 -m venv lib
 source lib/bin/activate
 pip install --upgrade pip setuptools wheel
 pip install pyinstaller customtkinter Pillow requests
 pip install --no-cache-dir --force-reinstall Pillow
 pyinstaller --noconsole --onefile --windowed --hidden-import=PIL._tkinter_finder --hidden-import=PIL._imagingtk main.py
-cp -f dist/main PardusTemaStore
+cp -f dist/main GnomeImlecMagazasi
 ```
 
 ## Kaynak

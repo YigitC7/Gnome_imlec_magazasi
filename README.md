@@ -28,7 +28,7 @@ Bir temayı indirdiniz ama nasıl aktif hale getireceğinizi bilmiyor musunuz? o
 ## İndirmek
 
 ### Dosyalar
-Derlenmiş program dosyası: <b><a href="https://github.com/YigitC7/PardusTemaStore/releases/download/b1.0/PardusTemaMagazasi_beta1.0.zip">indir</a> 64 Bit</b>
+Derlenmiş program dosyası: <b><a href="https://github.com/YigitC7/Gnome_imlec_magazasi/releases/download/1.0/Gnome_imlec_magazasi_1.0.tar.xz">indir</a> 64 Bit</b>
 
 ### Manuel Derleme
 Programı derlemek için aşağıdaki komudu terminale yapıştırın

@@ -3,7 +3,7 @@
 
 # Gnome İmlec Mağazası
 
-Gnome için geliştirdiğim İmleç Mağazasıdır. İstediğiniz imleç temasını indirip kaldırabilirsiniz, hemde tek tıkla.
+Gnome için geliştirdiğim İmleç Mağazasıdır. İstediğiniz imleç temasını indirip kaldırabilirsiniz, hemde tek tıkla. Bu proje, başarısız olan <a href="https://github.com/YigitC7/PardusTemaStore"> Pardus Tema Mağazası</a> projesinin kaynak kodlarının geri dönüştürülmüş halidir.
   <a>
     <img src="https://github.com/SabanGnc/SabanGnc/assets/139702707/cc75e47a-eda0-498f-bc38-1a9a3e6ea37c" alt="Github Stats" width="1200">
   </a>

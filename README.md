@@ -1,7 +1,9 @@
 
 <div align="center">
 
-# Gnome İmlec Mağazası
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Gnome-logo.svg/2048px-Gnome-logo.svg.png" alt="logo" width="128"/>
+
+# Gnome İmleç Mağazası
 
 Gnome için geliştirdiğim İmleç Mağazasıdır. İstediğiniz imleç temasını indirip kaldırabilirsiniz, hemde tek tıkla. Bu proje, başarısız olan <a href="https://github.com/YigitC7/PardusTemaStore"> Pardus Tema Mağazası</a> projesinin kaynak kodlarının geri dönüştürülmüş halidir.
   <a>

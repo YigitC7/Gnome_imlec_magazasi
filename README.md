@@ -18,7 +18,7 @@ Henüz beta aşamasında olduğu için bazı optimizasyon hataları olabilir. Bi
 
 ## İndirilen Tema Nasıl Aktif Edilir?
 Bir temayı indirdiniz ama nasıl aktif hale getireceğinizi bilmiyor musunuz? o zaman şu adımları takip edin:
-### 1 Pardus uygulama arama bölümüne "ince ayarlar" uygulamasını arayın ve o uygulamayı açın
+### Uygulama arama bölümüne "ince ayarlar" uygulamasını arayın ve o uygulamayı açın
 ![image](IMG/win/ornek.png)
 ## 2 Uygulamayı açtıktan sonra "Görünüm" sekmesine girin
 ![image](IMG/win/ornek2.png)

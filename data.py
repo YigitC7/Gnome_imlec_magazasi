@@ -84,12 +84,12 @@ ortamında herhangi bir sorun fark ederseniz bana bildirin."""
 
 
 program_hakkinda_s = "=========================="
-program_hakkinda = f"""Hazırlayan: Yiğit Çıtak
+program_hakkinda = f"""Developed by Yiğit Çıtak
 {program_hakkinda_s}
 Email:\n yigitcitak.1817@gmail.com\n
 Github:\n github.com/yigitc7
 \n\n\n\n\n\n\n\n\n\n\n\n\n
-© 2025 Gnome İmleç Mağazası"""
+© 2025 Gnome Cursor Store"""
 
 UrunTema_ozellikleri = {
 	"panel__fg_color" : "white",

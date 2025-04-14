@@ -3,6 +3,9 @@ import img_create
 import data
 import indirme_motoru
 from os import path, listdir, system
+import time
+from threading import Thread
+from tqdm import tqdm 
 
 kullanici_dizini = path.expanduser("~")
 
@@ -12,17 +15,17 @@ def widget(window):
 		def geri():
 			tema_secme_imlecler.pack(pady=120,padx=20)
 			program_hakkinda.pack_forget()
-			program_hakkinda_button.configure(command=program_hakkinda_button_funk, text="Hakkında")
+			program_hakkinda_button.configure(command=program_hakkinda_button_funk, text="About")
 
-		program_hakkinda_button.configure(command=geri, text="Geri")
+		program_hakkinda_button.configure(command=geri, text="Back")
 		tema_secme_imlecler.pack_forget()
 		program_hakkinda.pack(pady=120,padx=20)
 
 	# Dış yüzey
-	program_hakkinda_button = ctk.CTkButton(window,text="Hakkında",font=("italic",20),width=60,command=program_hakkinda_button_funk,fg_color="#20b2aa",text_color="white",hover_color="#90ee90")
+	program_hakkinda_button = ctk.CTkButton(window,text="About",font=("italic",20),width=60,command=program_hakkinda_button_funk,fg_color="#20b2aa",text_color="white",hover_color="#90ee90")
 	program_hakkinda_button.place(y=10,x=10)
 
-	kullanici_ismi = ctk.CTkLabel(window,text=f"Merhaba {data.Kullanici_tam_adi}",font=("italic",30),text_color="white")
+	kullanici_ismi = ctk.CTkLabel(window,text=f"Hello {data.Kullanici_tam_adi}",font=("italic",30),text_color="white")
 	kullanici_ismi.pack(pady=3)
 
 
@@ -31,451 +34,123 @@ def widget(window):
 	tema_secme_imlecler.pack(pady=120,padx=20)
 
 	# İmleç içerik: Fonksionlar
-	def imlec_no1_funk_indir(url=data.imlec_no1_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no1_button_indir.place_forget()
-		imlec_urun_no1_button_kaldir.place(x=650,y=30)
+	def imlec_span(urun_name, urun_code_name, urun_index, url):
+		def imlec_funk_indir(url=url):
+			imlec_urun_no1_button_indir.place_forget()
+			progressbar.place(x=650, y=30)
+			progressbar.set(0)
+          
+			def indirme_thread():
+				try:
+					dizin = f"{kullanici_dizini}/.icons"
+                    
+                    # Animasyonlu ilerleme göstergesi
+					for i in range(0, 81, 5):
+						progressbar.set(i/100)
+						tema_secme_imlecler.update()
+						time.sleep(0.1)
+                    
+                    # Gerçek indirme işlemi
+					indirme_motoru.dosya_indir(url)
+					indirme_motoru.arsiv_cikar("file.zip", dizin)
+                    
+                    # Kalan kısmı tamamla
+					for i in range(85, 101, 5):
+						progressbar.set(i/100)
+						tema_secme_imlecler.update()
+						time.sleep(0.05)
+                    
+					progressbar.place_forget()
+					imlec_urun_no1_button_kaldir.place(x=650, y=30)
+                
+				except Exception as e:
+					print(f"İndirme hatası: {e}")
+					progressbar.place_forget()
+					imlec_urun_no1_button_indir.place(x=650, y=30)
 
-	def imlec_no1_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Naroz-vr2b")
-		imlec_urun_no1_button_kaldir.place_forget()
-		imlec_urun_no1_button_indir.place(x=650,y=30)
+			Thread(target=indirme_thread, daemon=True).start()
 
-	def imlec_no2_funk_indir(url=data.imlec_no2_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no2_button_indir.place_forget()
-		imlec_urun_no2_button_kaldir.place(x=650,y=30)
+		def imlec_funk_kaldir():
+			imlec_urun_no1_button_kaldir.place_forget()
+			progressbar.place(x=650, y=30)
+			progressbar.set(0)
+            
+			def kaldirma_thread():
+				try:
+					for i in range(1, 101):
+						time.sleep(0.02)
+						progressbar.set(i/100)
+						tema_secme_imlecler.update()
+                    
+					system(f"rm -rf {kullanici_dizini}/.icons/{urun_code_name}")
+					progressbar.place_forget()
+					imlec_urun_no1_button_indir.place(x=650, y=30)
+				except Exception as e:
+					print(f"Kaldırma hatası: {e}")
+					progressbar.place_forget()
+					imlec_urun_no1_button_kaldir.place(x=650, y=30)
 
-	def imlec_no2_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/miku-cursor-linux")
-		imlec_urun_no2_button_kaldir.place_forget()
-		imlec_urun_no2_button_indir.place(x=650,y=30)
+			Thread(target=kaldirma_thread, daemon=True).start()
 
-	def imlec_no3_funk_indir(url=data.imlec_no3_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no3_button_indir.place_forget()
-		imlec_urun_no3_button_kaldir.place(x=650,y=30)
+        # Main panel
+		imlec_urun = ctk.CTkFrame(tema_secme_imlecler, height=200, width=1000,
+			fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
+		imlec_urun.pack(pady=20)
 
-	def imlec_no3_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Apple-cursors")
-		imlec_urun_no3_button_kaldir.place_forget()
-		imlec_urun_no3_button_indir.place(x=650,y=30)
+        # Icon
+		imlec_urun_img = ctk.CTkLabel(imlec_urun, text="")
+		img_create.add(label=imlec_urun_img, image_path=f"IMG/imlecler/no{urun_index}_icon.png",
+			size=(140,140))
+		imlec_urun_img.place(x=10, y=35)
 
-	def imlec_no4_funk_indir(url=data.imlec_no4_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no4_button_indir.place_forget()
-		imlec_urun_no4_button_kaldir.place(x=650,y=30)
+        # Title
+		imlec_urun_title = ctk.CTkLabel(imlec_urun, text=urun_name, font=("italic",40), 
+			text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
+		imlec_urun_title.place(x=200, y=50)
 
-	def imlec_no4_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Onedark-pixel")
-		imlec_urun_no4_button_kaldir.place_forget()
-		imlec_urun_no4_button_indir.place(x=650,y=30)
+        # Progress bar
+		progressbar = ctk.CTkProgressBar(imlec_urun, width=300, height=30)
+		progressbar.set(0)
 
-	def imlec_no5_funk_indir(url=data.imlec_no5_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no5_button_indir.place_forget()
-		imlec_urun_no5_button_kaldir.place(x=650,y=30)
+        # Buttons
+		if urun_code_name in listdir(f"{kullanici_dizini}/.icons/"):
+			imlec_urun_no1_button_kaldir = ctk.CTkButton(
+				imlec_urun, text="Kaldır", font=("italic",30), height=100,
+				command=imlec_funk_kaldir,
+				fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],
+				hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
+			imlec_urun_no1_button_kaldir.place(x=650, y=30)
 
-	def imlec_no5_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/We10XOS-cursors")
-		imlec_urun_no5_button_kaldir.place_forget()
-		imlec_urun_no5_button_indir.place(x=650,y=30)
+			imlec_urun_no1_button_indir = ctk.CTkButton(
+				imlec_urun, text="İndir", font=("italic",30), height=100,
+				command=imlec_funk_indir)
+		else:
+			imlec_urun_no1_button_indir = ctk.CTkButton(
+				imlec_urun, text="İndir", font=("italic",30), height=100,
+				command=imlec_funk_indir)
+			imlec_urun_no1_button_indir.place(x=650, y=30)
 
-	def imlec_no6_funk_indir(url=data.imlec_no6_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no6_button_indir.place_forget()
-		imlec_urun_no6_button_kaldir.place(x=650,y=30)
-
-	def imlec_no6_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Candy-Pixel-Blue-vr2")
-		imlec_urun_no6_button_kaldir.place_forget()
-		imlec_urun_no6_button_indir.place(x=650,y=30)
-
-	def imlec_no7_funk_indir(url=data.imlec_no7_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no7_button_indir.place_forget()
-		imlec_urun_no7_button_kaldir.place(x=650,y=30)
-
-	def imlec_no7_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Kureiji-Ollie-v2")
-		imlec_urun_no7_button_kaldir.place_forget()
-		imlec_urun_no7_button_indir.place(x=650,y=30)
-
-	def imlec_no8_funk_indir(url=data.imlec_no8_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no8_button_indir.place_forget()
-		imlec_urun_no8_button_kaldir.place(x=650,y=30)
-
-	def imlec_no8_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/BreezeX-Light")
-		imlec_urun_no8_button_kaldir.place_forget()
-		imlec_urun_no8_button_indir.place(x=650,y=30)
-
-	def imlec_no9_funk_indir(url=data.imlec_no9_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no9_button_indir.place_forget()
-		imlec_urun_no9_button_kaldir.place(x=650,y=30)
-
-	def imlec_no9_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Lighted-Pixel-Blue-vr2")
-		imlec_urun_no9_button_kaldir.place_forget()
-		imlec_urun_no9_button_indir.place(x=650,y=30)
-
-	def imlec_no10_funk_indir(url=data.imlec_no10_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no10_button_indir.place_forget()
-		imlec_urun_no10_button_kaldir.place(x=650,y=30)
-
-	def imlec_no10_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Banana")
-		imlec_urun_no10_button_kaldir.place_forget()
-		imlec_urun_no10_button_indir.place(x=650,y=30)
-
-	def imlec_no11_funk_indir(url=data.imlec_no11_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no11_button_indir.place_forget()
-		imlec_urun_no11_button_kaldir.place(x=650,y=30)
-
-	def imlec_no11_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/Bibata-Modern-Amber")
-		imlec_urun_no11_button_kaldir.place_forget()
-		imlec_urun_no11_button_indir.place(x=650,y=30)
-
-	def imlec_no12_funk_indir(url=data.imlec_no12_url):
-		dizin = f"{kullanici_dizini}/.icons"
-		indirme_motoru.dosya_indir(url)
-		indirme_motoru.arsiv_cikar("file.zip",dizin)
-		imlec_urun_no12_button_indir.place_forget()
-		imlec_urun_no12_button_kaldir.place(x=650,y=30)
-
-	def imlec_no12_funk_kaldir():
-		system(f"rm -rf {kullanici_dizini}/.icons/taiga-cursor")
-		imlec_urun_no12_button_kaldir.place_forget()
-		imlec_urun_no12_button_indir.place(x=650,y=30)
-
+			imlec_urun_no1_button_kaldir = ctk.CTkButton(
+				imlec_urun, text="Kaldır", font=("italic",30), height=100,
+				command=imlec_funk_kaldir,
+				fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],
+				hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
+	
 	# İmleç sayfası içeriği 
 
-	#İmleç 1
-	imlec_urun_no1 = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun_no1.pack(pady=20)
-	
-	imlec_urun_no1_title = ctk.CTkLabel(imlec_urun_no1,text="Naroz Cursor",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_no1_title.place(x=250,y=30)
-	
-	if  "Naroz-vr2b" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no1_button_kaldir = ctk.CTkButton(imlec_urun_no1,text="Kaldır",font=("italic",30),height=100,command=imlec_no1_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no1_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no1_button_indir = ctk.CTkButton(imlec_urun_no1,text="İndir",font=("italic",30),height=100,command=imlec_no1_funk_indir)
-	else:
-		imlec_urun_no1_button_indir = ctk.CTkButton(imlec_urun_no1,text="İndir",font=("italic",30),height=100,command=imlec_no1_funk_indir)
-		imlec_urun_no1_button_indir.place(x=650,y=30)
-
-		imlec_urun_no1_button_kaldir = ctk.CTkButton(imlec_urun_no1,text="Kaldır",font=("italic",30),height=100,command=imlec_no1_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_no1_img = ctk.CTkLabel(imlec_urun_no1,text="",)
-	img_create.add(label=imlec_urun_no1_img,image_path="IMG/imlecler/no1_icon.png",size=(140,140))
-	imlec_urun_no1_img.place(x=10,y=35)
-
-	imlec_urun_no1_aciklama = ctk.CTkLabel(imlec_urun_no1,text=data.imlec_no1_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_no1_aciklama.place(x=230,y=90)
-
-	#İmleç 2
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Miku Cursors",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "miku-cursor-linux" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no2_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no2_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no2_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no2_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no2_funk_indir)
-	else:
-		imlec_urun_no2_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no2_funk_indir)
-		imlec_urun_no2_button_indir.place(x=650,y=30)
-
-		imlec_urun_no2_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no2_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no2_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no2_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 3
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Apple Cursors",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "Apple-cursors" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no3_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no3_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no3_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no3_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no3_funk_indir)
-	else:
-		imlec_urun_no3_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no3_funk_indir)
-		imlec_urun_no3_button_indir.place(x=650,y=30)
-
-		imlec_urun_no3_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no3_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no3_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no3_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 4
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Onedark Pixel",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "Onedark-pixel" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no4_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no4_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no4_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no4_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no4_funk_indir)
-	else:
-		imlec_urun_no4_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no4_funk_indir)
-		imlec_urun_no4_button_indir.place(x=650,y=30)
-
-		imlec_urun_no4_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no4_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no4_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no4_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 5
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="We10XOS",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "We10XOS-cursors" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no5_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no5_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no5_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no5_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no5_funk_indir)
-	else:
-		imlec_urun_no5_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no5_funk_indir)
-		imlec_urun_no5_button_indir.place(x=650,y=30)
-
-		imlec_urun_no5_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no5_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no5_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no5_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 6
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Candy Pixel",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "Candy-Pixel-Blue-vr2" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no6_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no6_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no6_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no6_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no6_funk_indir)
-	else:
-		imlec_urun_no6_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no6_funk_indir)
-		imlec_urun_no6_button_indir.place(x=650,y=30)
-
-		imlec_urun_no6_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no6_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no6_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no6_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 7
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Kureiji Ollie",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "Kureiji-Ollie-v2" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no7_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no7_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no7_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no7_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no7_funk_indir)
-	else:
-		imlec_urun_no7_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no7_funk_indir)
-		imlec_urun_no7_button_indir.place(x=650,y=30)
-
-		imlec_urun_no7_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no7_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no7_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no7_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 8
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="BreezeX Light",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "BreezeX-Light" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no8_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no8_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no8_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no8_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no8_funk_indir)
-	else:
-		imlec_urun_no8_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no8_funk_indir)
-		imlec_urun_no8_button_indir.place(x=650,y=30)
-
-		imlec_urun_no8_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no8_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no8_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no8_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 9
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Lighted Pixel Blue",font=("italic",30),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "Lighted-Pixel-Blue-vr2" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no9_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no9_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no9_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no9_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no9_funk_indir)
-	else:
-		imlec_urun_no9_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no9_funk_indir)
-		imlec_urun_no9_button_indir.place(x=650,y=30)
-
-		imlec_urun_no9_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no9_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no9_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no9_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 10
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Banana",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "Banana" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no10_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no10_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no10_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no10_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no10_funk_indir)
-	else:
-		imlec_urun_no10_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no10_funk_indir)
-		imlec_urun_no10_button_indir.place(x=650,y=30)
-
-		imlec_urun_no10_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no10_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no10_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no10_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 11
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Bibata Modern Amber",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=170,y=30)
-	
-	if  "Bibata-Modern-Amber" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no11_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no11_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no11_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no11_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no11_funk_indir)
-	else:
-		imlec_urun_no11_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no11_funk_indir)
-		imlec_urun_no11_button_indir.place(x=650,y=30)
-
-		imlec_urun_no11_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no11_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no11_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no11_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
-
-	#İmleç 12
-	imlec_urun = ctk.CTkFrame(tema_secme_imlecler,height=200,width=1000,fg_color=data.UrunTema_ozellikleri["panel__fg_color"])
-	imlec_urun.pack(pady=20)
-	
-	imlec_urun_title = ctk.CTkLabel(imlec_urun,text="Taiga Cursor",font=("italic",40),text_color=data.UrunTema_ozellikleri["urun_adi__text_color"])
-	imlec_urun_title.place(x=250,y=30)
-	
-	if  "taiga-cursor" in listdir(f"{kullanici_dizini}/.icons/"):
-		imlec_urun_no12_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no12_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-		imlec_urun_no12_button_kaldir.place(x=650,y=30)
-
-		imlec_urun_no12_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no12_funk_indir)
-	else:
-		imlec_urun_no12_button_indir = ctk.CTkButton(imlec_urun,text="İndir",font=("italic",30),height=100,command=imlec_no12_funk_indir)
-		imlec_urun_no12_button_indir.place(x=650,y=30)
-
-		imlec_urun_no12_button_kaldir = ctk.CTkButton(imlec_urun,text="Kaldır",font=("italic",30),height=100,command=imlec_no12_funk_kaldir,fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
-
-	imlec_urun_img = ctk.CTkLabel(imlec_urun,text="",)
-	img_create.add(label=imlec_urun_img,image_path="IMG/imlecler/no12_icon.png",size=(140,140))
-	imlec_urun_img.place(x=10,y=35)
-
-	imlec_urun_aciklama = ctk.CTkLabel(imlec_urun,text=data.imlec_no12_aciklama,font=("italic",10),text_color=data.UrunTema_ozellikleri["urun_aciklama__text_color"])	
-	imlec_urun_aciklama.place(x=230,y=90)
+	#İmleçler
+	imlec_span(urun_name="Naroz Cursor",urun_code_name="Naroz-vr2b",urun_index="1",url=data.imlec_no1_url)
+	imlec_span(urun_name="Miku Cursor",urun_code_name="miku-cursor-linux",urun_index="2",url=data.imlec_no2_url)
+	imlec_span(urun_name="Apple Cursors",urun_code_name="Apple-cursors",urun_index="3",url=data.imlec_no3_url)
+	imlec_span(urun_name="Onedark Pixel",urun_code_name="Onedark-pixel",urun_index="4",url=data.imlec_no4_url)
+	imlec_span(urun_name="We10XOS Cursors",urun_code_name="We10XOS-cursors",urun_index="5",url=data.imlec_no5_url)
+	imlec_span(urun_name="Candy Pixel Cursor",urun_code_name="Candy-Pixel-Blue-vr2",urun_index="6",url=data.imlec_no6_url)
+	imlec_span(urun_name="Kureiji Ollie",urun_code_name="Kureiji-Ollie-v2",urun_index="7",url=data.imlec_no7_url)
+	imlec_span(urun_name="BreezeX-Light",urun_code_name="BreezeX-Light",urun_index="8",url=data.imlec_no8_url)
+	imlec_span(urun_name="Aydınlatılmış Piksel",urun_code_name="Lighted-Pixel-Blue-vr2",urun_index="9",url=data.imlec_no9_url)
+	imlec_span(urun_name="Banana",urun_code_name="Banana",urun_index="10",url=data.imlec_no10_url)
+	imlec_span(urun_name="Bibata Modern Amber",urun_code_name="Bibata-Modern-Amber",urun_index="11",url=data.imlec_no11_url)
+	imlec_span(urun_name="taiga-cursor",urun_code_name="taiga-cursor",urun_index="12",url=data.imlec_no12_url)
 
 
 	#Ana Sayfa: Hakkında

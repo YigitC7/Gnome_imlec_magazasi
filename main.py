@@ -14,7 +14,7 @@ import indirme_motoru
 class mainWindow:
 	def __init__(self,window):
 		self.window = window
-		self.window.title("Gnome İmleç Mağazası")
+		self.window.title("Gnome Cursor Store")
 		self.window.geometry("1200x700")
 		self.window.minsize(1200,700)
 		self.window.maxsize(1920,1080)

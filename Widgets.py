@@ -115,23 +115,23 @@ def widget(window):
         # Buttons
 		if urun_code_name in listdir(f"{kullanici_dizini}/.icons/"):
 			imlec_urun_no1_button_kaldir = ctk.CTkButton(
-				imlec_urun, text="Kaldır", font=("italic",30), height=100,
+				imlec_urun, text="Remove", font=("italic",30), height=100,
 				command=imlec_funk_kaldir,
 				fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],
 				hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
 			imlec_urun_no1_button_kaldir.place(x=650, y=30)
 
 			imlec_urun_no1_button_indir = ctk.CTkButton(
-				imlec_urun, text="İndir", font=("italic",30), height=100,
+				imlec_urun, text="Download", font=("italic",30), height=100,
 				command=imlec_funk_indir)
 		else:
 			imlec_urun_no1_button_indir = ctk.CTkButton(
-				imlec_urun, text="İndir", font=("italic",30), height=100,
+				imlec_urun, text="Download", font=("italic",30), height=100,
 				command=imlec_funk_indir)
 			imlec_urun_no1_button_indir.place(x=650, y=30)
 
 			imlec_urun_no1_button_kaldir = ctk.CTkButton(
-				imlec_urun, text="Kaldır", font=("italic",30), height=100,
+				imlec_urun, text="Remove", font=("italic",30), height=100,
 				command=imlec_funk_kaldir,
 				fg_color=data.UrunTema_ozellikleri["kaldir_buton__fg_color"],
 				hover_color=data.UrunTema_ozellikleri["kaldir_buton__hover_color"])
